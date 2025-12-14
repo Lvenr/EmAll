@@ -1,0 +1,38 @@
+#define button1B 3  // пин кнопки button1
+boolean button1S;   // храним состояния кнопок
+boolean button1F;   // флажки кнопок
+boolean button1P;   // флажки кнопок на нажатие
+boolean button1H;   // флажки кнопок на удержание
+
+#define hold 500
+#define debounce 80
+unsigned long button1_timer;
+void setup() {
+  Serial.begin(9600);
+  pinMode(button1B, INPUT_PULLUP);
+}
+
+void loop() {
+  //-------опрос кнопок--------
+  button1S = !digitalRead(button1B);
+  buttons(); //отработка кнопок
+  //-------опрос кнопок--------
+  if (button1P) {
+    Serial.println("pressed");
+    button1P = 0;
+  }
+  if (button1H) {
+    Serial.println("hold");
+    button1H = 0;
+  }
+}
+
+//------------------------ОТРАБОТКА КНОПКИ-------------------------
+void buttons() {
+  //--------------------------------------------------------------
+  // нажали (с антидребезгом)
+  if (button1S && !button1F && millis() - button1_timer > debounce) {
+    button1F = 1;
+    button1_timer = millis();
+  }
+}
